@@ -17,6 +17,43 @@ def CheckGoogleDataSourceExists(dataSourceId):
     else:
         return True
 
+def UploadIfitBpToGoogle():
+
+    google_datapoint = {
+    "minStartTimeNs": 1658249100000000000,
+    "maxEndTimeNs": 1658249210000000000,
+    "dataSourceId": "raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
+    "point": [
+      {
+        "dataTypeName": "com.google.blood_pressure", 
+        "startTimeNanos": 1658249100000000000,
+        "endTimeNanos": 1658249110000000000,
+        "value": [{"fpVal": 120.0}, {"fpVal": 80.0}, {}, {}]
+      }
+    ]
+    }
+    
+    print(google_datapoint)
+    
+    '''
+    a = service.users().dataSources().datasets().get(
+        userId='me',
+        dataSourceId="raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
+        datasetId="1658249110000000000-1658249100011111111",
+    ).execute()
+    print(a)
+    '''
+    try:
+        service.users().dataSources().datasets().patch(
+            userId="me",
+            dataSourceId="raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
+            datasetId="1658249110000000000-1658249110011111111",
+            body=google_datapoint
+        ).execute()
+    except HttpError as error:
+        raise error
+    print("Uploaded BP data successfully")    
+    
 def CreateGoogleDataSource(GoogleDataSourceJson):
     try:
         service.users().dataSources().create(
@@ -40,7 +77,7 @@ def UploadIfitHrToGoogle():
               }
         ]
     }
-
+    print(google_datapoint)
     '''
     datasetId = (
         str(google_datapoint["minStartTimeNs"])
@@ -48,12 +85,6 @@ def UploadIfitHrToGoogle():
         + str(google_datapoint["maxEndTimeNs"])
     )
     '''
-
-    '''
-    a = service.users().dataSources().datasets().get(userId='me', dataSourceId=GOOGLE_DATA_SOURCES[0]["datasourceid"], datasetId="1658249110000000000-1658249100011111111").execute()
-    print(a)
-    '''
-    
     try:
         service.users().dataSources().datasets().patch(
             userId="me",
@@ -64,12 +95,14 @@ def UploadIfitHrToGoogle():
     except HttpError as error:
         raise error
     print("Uploaded HR data successfully")
-
+    '''
+    
 if __name__=='__main__':
-    for x in GOOGLE_DATA_SOURCES:
-        if not CheckGoogleDataSourceExists("raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001"):
-            y = x.pop("dataSourceId")
-            CreateGoogleDataSource(x)
+    #for x in GOOGLE_DATA_SOURCES:
+    #    if not CheckGoogleDataSourceExists("raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001"):
+    #        y = x.pop("dataSourceId")
+    #        CreateGoogleDataSource(x)
 
-    UploadIfitHrToGoogle()
+    #UploadIfitHrToGoogle()
+    UploadIfitBpToGoogle()
 

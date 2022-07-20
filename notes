@@ -60,3 +60,20 @@ response:
   # grįžta kažkokios info
 
   # nesikeičia, atrodo                                                            [cksum]
+  
+      '''
+    a = service.users().dataSources().datasets().get(
+        userId='me',
+        dataSourceId="raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001",
+        datasetId="1658249110000000000-1658249100011111111",
+    ).execute()
+    print(a)
+    '''
+    ''' 
+    a = service.users().dataSources().datasets().delete(
+        userId='me',
+        dataSourceId="raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001",
+        datasetId="1658249110000000000-1658249100011111111",
+    ).execute()
+    print(a)
+

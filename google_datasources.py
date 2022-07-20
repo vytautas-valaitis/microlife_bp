@@ -24,6 +24,26 @@ GOOGLE_DATA_SOURCES = [
     "manufacturer": "Microlife"
   },
   "type": "raw"
+},
+
+{
+  "name": "Microlife BP 2",
+  "dataSourceId": "raw:com.google.blood_pressure:get-fit:Microlife:B3:100002",
+  "dataType": {
+    "name": "com.google.blood_pressure"
+   },
+  "application": {
+    "name": "get-fit",
+    "version": "1.0"
+  },
+  "device": {
+    "model": "B3",
+    "version": "1.0",
+    "type": "watch",
+    "uid": "100001",
+    "manufacturer": "Microlife"
+  },
+  "type": "raw"
 }
 
 ]
