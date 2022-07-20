@@ -17,43 +17,6 @@ def CheckGoogleDataSourceExists(dataSourceId):
     else:
         return True
 
-def UploadIfitBpToGoogle():
-
-    google_datapoint = {
-    "minStartTimeNs": 1658249100000000000,
-    "maxEndTimeNs": 1658249210000000000,
-    "dataSourceId": "raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
-    "point": [
-      {
-        "dataTypeName": "com.google.blood_pressure", 
-        "startTimeNanos": 1658249100000000000,
-        "endTimeNanos": 1658249110000000000,
-        "value": [{"fpVal": 120.0}, {"fpVal": 80.0}, {}, {}]
-      }
-    ]
-    }
-    
-    print(google_datapoint)
-    
-    '''
-    a = service.users().dataSources().datasets().get(
-        userId='me',
-        dataSourceId="raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
-        datasetId="1658249110000000000-1658249100011111111",
-    ).execute()
-    print(a)
-    '''
-    try:
-        service.users().dataSources().datasets().patch(
-            userId="me",
-            dataSourceId="raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
-            datasetId="1658249110000000000-1658249110011111111",
-            body=google_datapoint
-        ).execute()
-    except HttpError as error:
-        raise error
-    print("Uploaded BP data successfully")    
-    
 def CreateGoogleDataSource(GoogleDataSourceJson):
     try:
         service.users().dataSources().create(
@@ -64,45 +27,83 @@ def CreateGoogleDataSource(GoogleDataSourceJson):
             raise error
     print("DataSource successfully created")
     
-def UploadIfitHrToGoogle():
+def UploadHrToGoogle(timeNs, hr):
     google_datapoint = {
-        "minStartTimeNs":1658249100000000000,
-        "maxEndTimeNs":1658249210000000000,
+        "minStartTimeNs":timeNs,
+        "maxEndTimeNs":timeNs,
         "dataSourceId":"raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001",  #"raw:com.google.heart_rate.bpm:eb36738d:Microlife:B3:6f26fa75", #
         "point":[
-              {"startTimeNanos": 1658249100000000000,
-               "endTimeNanos": 1658249100000000000,
+              {"startTimeNanos": timeNs,
+               "endTimeNanos": timeNs,
                "dataTypeName": "com.google.heart_rate.bpm",
-               "value": [{"fpVal": 66.6}]
+               "value": [{"fpVal": hr}]
               }
         ]
     }
-    print(google_datapoint)
-    '''
+    
     datasetId = (
         str(google_datapoint["minStartTimeNs"])
         + "-"
         + str(google_datapoint["maxEndTimeNs"])
     )
-    '''
+    
     try:
         service.users().dataSources().datasets().patch(
             userId="me",
             dataSourceId="raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001",
-            datasetId="1658249110000000000-1658249100011111111", #datasetId,
+            datasetId=datasetId,
             body=google_datapoint
         ).execute()
     except HttpError as error:
         raise error
     print("Uploaded HR data successfully")
-    '''
+
+def UploadBpToGoogle(timeNs, bp_sys, bp_dia):
+
+    google_datapoint = {
+    "minStartTimeNs": timeNs,
+    "maxEndTimeNs": timeNs,
+    "dataSourceId": "raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
+    "point": [
+      {
+        "dataTypeName": "com.google.blood_pressure", 
+        "startTimeNanos": timeNs,
+        "endTimeNanos": timeNs,
+        "value": [{"fpVal": bp_sys}, {"fpVal": bp_dia}, {}, {}]
+      }
+    ]
+    }
+
+    datasetId = (
+        str(google_datapoint["minStartTimeNs"])
+        + "-"
+        + str(google_datapoint["maxEndTimeNs"])
+    )
     
+    try:
+        service.users().dataSources().datasets().patch(
+            userId="me",
+            dataSourceId="raw:com.google.blood_pressure:478274208348:Microlife:B3:100001",
+            datasetId=datasetId,
+            body=google_datapoint
+        ).execute()
+    except HttpError as error:
+        raise error
+    print("Uploaded BP data successfully")    
+
+def UploadBpHrList(data):
+    for d in data:
+        print(d)
+        UploadHrToGoogle(d[0], d[3])
+        UploadBpToGoogle(d[0], d[1], d[2])
+
 if __name__=='__main__':
     #for x in GOOGLE_DATA_SOURCES:
     #    if not CheckGoogleDataSourceExists("raw:com.google.heart_rate.bpm:478274208348:Microlife:B3:100001"):
     #        y = x.pop("dataSourceId")
     #        CreateGoogleDataSource(x)
 
-    #UploadIfitHrToGoogle()
-    UploadIfitBpToGoogle()
+    #UploadHrToGoogle()
+    #UploadBpToGoogle()
+    pass
 
